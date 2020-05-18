@@ -1,6 +1,7 @@
 package com.example.search_engine.search.text_search.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,34 @@ import com.example.search_engine.search.text_search.data.TextSearchResultData;
 
 import java.util.List;
 
-public class TextSearchResultsAdapter extends ArrayAdapter<TextSearchResultData> {
 
-    public TextSearchResultsAdapter(@NonNull Context context, List<TextSearchResultData> textSearchResultData) {
-        super(context, 0, textSearchResultData);
+
+public class TextSearchResultsAdapter extends ArrayAdapter<TextSearchResultData> {
+    String TAG = "TextSearchResultsAdapter";
+    public interface OnLoadMoreItemsListener{
+        void onLoadMoreItems();
     }
+    private OnLoadMoreItemsListener mOnLoadMoreItemsListener;
+
+
+    public TextSearchResultsAdapter(@NonNull Context context, List<TextSearchResultData> textSearchResultData
+            , OnLoadMoreItemsListener onLoadMoreItemsListener) {
+        super(context, 0, textSearchResultData);
+        mOnLoadMoreItemsListener = onLoadMoreItemsListener;
+    }
+
+    private boolean reachedEndOfList(int position){
+        return position == getCount() - 1;
+    }
+    private void loadMoreData() {
+        try {
+            mOnLoadMoreItemsListener.onLoadMoreItems();
+        } catch (NullPointerException e) {
+            Log.d(TAG, "loadMoreData:Null ptr exc " + e.getMessage());
+        }
+
+    }
+
 
     @NonNull
     @Override
@@ -39,6 +63,10 @@ public class TextSearchResultsAdapter extends ArrayAdapter<TextSearchResultData>
         url.setText(Item.getmUrl().toString());
         brief.setText(Item.getmBrief().toString());
 
+
+        if(reachedEndOfList(position)) {
+            loadMoreData();
+        }
         return ListItemView;
     }
 

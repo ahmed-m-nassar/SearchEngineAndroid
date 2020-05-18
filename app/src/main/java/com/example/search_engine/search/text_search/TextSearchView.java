@@ -26,12 +26,17 @@ import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
-public class TextSearchView extends Fragment implements TextSearchViewPresenterContract.View {
+public class TextSearchView extends Fragment implements TextSearchViewPresenterContract.View, TextSearchResultsAdapter.OnLoadMoreItemsListener {
     private ProgressBar              mProgressBar;
     private ListView                 mListView;
     private AutoCompleteTextView     mTextView;
     private ImageButton              mSearchButton;
     private ImageButton              mVoiceSearchButton;
+
+    private TextSearchResultsAdapter mAdapter;
+    private ArrayList<TextSearchResultData> mSearchResults;
+    private ArrayList<TextSearchResultData> mPaginatedSearchResults;
+    private int mResults;
 
     private TextSearchPresenter      mPresenter;
 
@@ -94,8 +99,20 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
     /////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public void showSearchResults(ArrayList<TextSearchResultData> searchResults) {
-        TextSearchResultsAdapter adapter = new TextSearchResultsAdapter(getContext() , searchResults);
-        mListView.setAdapter(adapter);
+        mSearchResults = searchResults;
+
+        mPaginatedSearchResults = new ArrayList<>();
+        int iterations = mSearchResults.size();
+        if(iterations > 10)
+            iterations = 10;
+        mResults = 10;
+        for(int i = 0 ; i < iterations ; i++) {
+            mPaginatedSearchResults.add(mSearchResults.get(i));
+        }
+
+
+        mAdapter = new TextSearchResultsAdapter(getContext() , mPaginatedSearchResults , this);
+        mListView.setAdapter(mAdapter);
     }
 
     @Override
@@ -134,6 +151,8 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
         startActivityForResult(intent,10);
 
     }
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,5 +178,28 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
                 }
                 break;
         }
+    }
+
+    public void displayMoreSearchResults() {
+        if(mSearchResults.size() > mResults && mSearchResults.size() > 0) {
+            int iterations ;
+            if(mSearchResults.size() > (mResults + 10)) {
+                iterations = 10;
+            } else {
+                iterations = mSearchResults.size() - mResults;
+            }
+
+            //adding the new search results
+            for (int i = mResults ; i < mResults + iterations ; i++) {
+                mPaginatedSearchResults.add(mSearchResults.get(i));
+            }
+            mResults += iterations;
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onLoadMoreItems() {
+        displayMoreSearchResults();
     }
 }
