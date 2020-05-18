@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="www.google.com"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="15dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small"
+        android:id="@+id/SearchTextItem_URL_TextView"
+        ></TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Google"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/SearchTextItem_URL_TextView"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="15dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#3262fc"
+        android:id="@+id/SearchTextItem_Title_TextView"
+        ></TextView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Examples of how to use HTML, CSS, JavaScript, SQL, PHP, Python, Bootstrap"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/SearchTextItem_Title_TextView"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="15dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:id="@+id/SearchTextItem_Brief_TextView"
+        android:textColor="@color/grey"
+        ></TextView>
+</RelativeLayout>
