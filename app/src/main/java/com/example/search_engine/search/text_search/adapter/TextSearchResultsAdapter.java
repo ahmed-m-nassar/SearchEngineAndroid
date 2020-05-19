@@ -52,7 +52,7 @@ public class TextSearchResultsAdapter extends ArrayAdapter<TextSearchResultData>
         View ListItemView = convertView;
         if(ListItemView == null)
         {
-            ListItemView = LayoutInflater.from(getContext()).inflate(R.layout.search_text_item,parent,false);
+            ListItemView = LayoutInflater.from(getContext()).inflate(R.layout.text_list_item,parent,false);
         }
 
         TextView title =    ListItemView.findViewById(R.id.SearchTextItem_Title_TextView);

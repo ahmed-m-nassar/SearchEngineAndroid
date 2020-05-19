@@ -12,9 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+
 import com.example.search_engine.R;
 import com.example.search_engine.search.image_search.data.ImageSearchResultData;
-import com.example.search_engine.search.text_search.data.TextSearchResultData;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -53,13 +53,14 @@ public class ImageSearchResultsAdapter extends ArrayAdapter<ImageSearchResultDat
         View ListItemView = convertView;
         if(ListItemView == null)
         {
-            ListItemView = LayoutInflater.from(getContext()).inflate(R.layout.search_image_item,parent,false);
+            ListItemView = LayoutInflater.from(getContext()).inflate(R.layout.image_list_item,parent,false);
         }
 
         ImageView image = ListItemView.findViewById(R.id.SearchImageItem_Image);
         TextView caption = ListItemView.findViewById(R.id.SearchImageItem_Caption);
 
         Picasso.get().load(Item.getmImageURL()).into(image);
+
         caption.setText(Item.getmImageDescription());
 
         if(reachedEndOfList(position)) {

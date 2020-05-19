@@ -81,10 +81,28 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
 
         //getting search query from bundle
         /////////////////////////////////////////////////////////////////////
-
         mTextView.setText(((SearchMain)getActivity()).getSearchQuery());
-
         /////////////////////////////////////////////////////////////////////
+
+        //search button click listeners
+        ///////////////////////////////////////////////////////////////////
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchButtonClicked();
+            }
+        });
+        ///////////////////////////////////////////////////////////////////////
+
+        //search by voice button click listeners
+        ///////////////////////////////////////////////////////////////////
+        mVoiceSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchByVoiceButtonClicked();
+            }
+        });
+        ///////////////////////////////////////////////////////////////////////
     }
 
     @Override

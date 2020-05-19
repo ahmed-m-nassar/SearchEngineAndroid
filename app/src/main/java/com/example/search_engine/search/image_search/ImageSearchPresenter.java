@@ -26,6 +26,22 @@ public class ImageSearchPresenter implements ImageSearchModelPresenterContract.P
     @Override
     public void searchForResults(String query , String region) {
         mModel.requestSearchResults(query , region);
+
+        //for test purpose
+        ///////////////////////////////////////////////////////////////////////
+       //ArrayList<ImageSearchResultData> resultData = new ArrayList<>();
+       //resultData.add(new ImageSearchResultData("https://www.encodedna.com/images/theme/angularjs.png" ,
+       //        "Angular"));
+
+       //resultData.add(new ImageSearchResultData("https://picsum.photos/id/237/200/300.jpg" ,
+       //        "dog"));
+
+       //resultData.add(new ImageSearchResultData("https://i.picsum.photos/id/1001/200/300.jpg" ,
+       //        "beach"));
+
+       //mView.stopLoadingScreen();
+       //mView.showSearchResults(resultData);
+        //////////////////////////////////////////////////////////////////////
     }
 
     @Override
