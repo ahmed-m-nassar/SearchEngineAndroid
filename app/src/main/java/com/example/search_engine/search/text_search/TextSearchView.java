@@ -1,6 +1,13 @@
 package com.example.search_engine.search.text_search;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
@@ -14,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.search_engine.R;
@@ -21,31 +29,35 @@ import com.example.search_engine.search.SearchMain;
 import com.example.search_engine.search.text_search.adapter.TextSearchResultsAdapter;
 import com.example.search_engine.search.text_search.data.TextSearchResultData;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static android.app.Activity.RESULT_OK;
 
 public class TextSearchView extends Fragment implements TextSearchViewPresenterContract.View, TextSearchResultsAdapter.OnLoadMoreItemsListener {
-    private ProgressBar              mProgressBar;
-    private ListView                 mListView;
-    private AutoCompleteTextView     mTextView;
-    private ImageButton              mSearchButton;
-    private ImageButton              mVoiceSearchButton;
+    private ProgressBar mProgressBar;
+    private ListView mListView;
+    private AutoCompleteTextView mTextView;
+    private ImageButton mSearchButton;
+    private ImageButton mVoiceSearchButton;
 
     private TextSearchResultsAdapter mAdapter;
     private ArrayList<TextSearchResultData> mSearchResults;
     private ArrayList<TextSearchResultData> mPaginatedSearchResults;
     private int mResults;
 
-    private TextSearchPresenter      mPresenter;
+    private TextSearchPresenter mPresenter;
 
-
+    private int ACCESS_COARSE_LOCATION_CODE = 100;
+    private int ACCESS_FINE_LOCATION_CODE = 101;
+    private int ACCESS_NETWORK_STATE_CODE = 102;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.search_text,container,false);
+        return inflater.inflate(R.layout.search_text, container, false);
     }
 
     @Override
@@ -65,7 +77,7 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
 
         //getting search query from bundle
         /////////////////////////////////////////////////////////////////////
-        mTextView.setText(((SearchMain)getActivity()).getSearchQuery());
+        mTextView.setText(((SearchMain) getActivity()).getSearchQuery());
         /////////////////////////////////////////////////////////////////////
 
 
@@ -90,7 +102,6 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
         ///////////////////////////////////////////////////////////////////////
 
 
-
     }
 
     //View Interface methods
@@ -103,15 +114,15 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
 
         mPaginatedSearchResults = new ArrayList<>();
         int iterations = mSearchResults.size();
-        if(iterations > 10)
+        if (iterations > 10)
             iterations = 10;
         mResults = 10;
-        for(int i = 0 ; i < iterations ; i++) {
+        for (int i = 0; i < iterations; i++) {
             mPaginatedSearchResults.add(mSearchResults.get(i));
         }
 
 
-        mAdapter = new TextSearchResultsAdapter(getContext() , mPaginatedSearchResults , this);
+        mAdapter = new TextSearchResultsAdapter(getContext(), mPaginatedSearchResults, this);
         mListView.setAdapter(mAdapter);
     }
 
@@ -141,18 +152,70 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////
     private void searchButtonClicked() {
-        mPresenter.searchForResults(mTextView.getText().toString());
+        String country = getCurrentLocation();
+        if(country == null)
+            return;
+
+        mPresenter.searchForResults(mTextView.getText().toString() , country);
     }
 
     private void searchByVoiceButtonClicked() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH);
-        startActivityForResult(intent,10);
+        startActivityForResult(intent, 10);
 
     }
 
+    private void requestLocationPermissions() {
+        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ACCESS_COARSE_LOCATION_CODE);
+        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_FINE_LOCATION_CODE);
+        requestPermissions(new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, ACCESS_NETWORK_STATE_CODE);
+    }
 
+    private String getCurrentLocation() {
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)
+        {
+            Toast.makeText(getContext(), "Permission not granted", Toast.LENGTH_SHORT).show();
+            requestLocationPermissions();
+            return null;
+        }
+        Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location network = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        double latitude;
+        double logitude;
+        Location finalLoc = null;
+        if(gpsLocation != null) {
+            finalLoc = gpsLocation;
+            latitude = gpsLocation.getLatitude();
+            logitude = gpsLocation.getLongitude();
+        } else if (network != null) {
+            finalLoc = network;
+            latitude = network.getLatitude();
+            logitude = network.getLongitude();
+        } else {
+            latitude = 0.0;
+            logitude =0.0;
+        }
+
+        try {
+            Geocoder geocoder = new Geocoder(getContext() , Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(latitude,logitude,1);
+            if(addresses != null && addresses.size() > 0) {
+                String country = addresses.get(0).getCountryName();
+                return country;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////

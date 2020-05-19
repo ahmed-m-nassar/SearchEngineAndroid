@@ -1,10 +1,12 @@
-package com.example.search_engine.search.text_search;
+package com.example.search_engine.search.image_search;
 
+import com.example.search_engine.search.image_search.data.ImageSearchResultData;
 import com.example.search_engine.search.text_search.data.TextSearchResultData;
 
 import java.util.ArrayList;
 
-public interface TextSearchModelPresenterContract {
+public interface ImageSearchModelPresenterContract {
+
     interface Model {
         void requestSearchResults(String searchQuery , String region);
     }
@@ -12,7 +14,7 @@ public interface TextSearchModelPresenterContract {
     interface Presenter {
         void hideLoadingScreen();
         void showLoadingScreen();
-        void showResults(ArrayList<TextSearchResultData> results);
+        void showResults(ArrayList<ImageSearchResultData> results);
         void showMessage(String message);
     }
 }

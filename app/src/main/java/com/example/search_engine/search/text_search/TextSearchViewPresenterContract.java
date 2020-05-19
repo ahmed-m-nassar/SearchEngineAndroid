@@ -13,6 +13,6 @@ public interface TextSearchViewPresenterContract {
     }
 
     interface Presenter{
-        void searchForResults(String query);
+        void searchForResults(String query , String region) ;
     }
 }

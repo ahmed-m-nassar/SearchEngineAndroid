@@ -19,8 +19,8 @@ public class TextSearchPresenter implements TextSearchViewPresenterContract.Pres
     }
 
     @Override
-    public void searchForResults(String query) {
-        mModel.requestSearchResults();
+    public void searchForResults(String query , String region) {
+        mModel.requestSearchResults(query , region);
     }
 
 

@@ -1,10 +1,15 @@
-package com.example.search_engine.search.image_search.model;
+package com.example.search_engine.search.image_search.data;
 
-public class ImageSearchResult {
+import com.example.search_engine.utilities.JsonNamesUtilities;
+import com.google.gson.annotations.SerializedName;
+
+public class ImageSearchResultData {
+    @SerializedName(JsonNamesUtilities.IMAGE_RESULT_URL)
     private String mImageURL;
+    @SerializedName(JsonNamesUtilities.IMAGE_RESULT_CAPTION)
     private  String mImageDescription;
 
-    public ImageSearchResult(String mImageURL, String mImageDescription) {
+    public ImageSearchResultData(String mImageURL, String mImageDescription) {
         this.mImageURL = mImageURL;
         this.mImageDescription = mImageDescription;
     }
