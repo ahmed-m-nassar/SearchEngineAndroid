@@ -8,22 +8,23 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
-    private static final String Database_Name = "StudyStream.db";
-    private static final int Database_Version = 1;
+    private static final String Database_Name = "Search_Engine.db";
+    private static final int Database_Version = 2;
 
     private SQLiteDatabase db;
 
     public DBHelper(Context context) {
         super(context, Database_Name, null, Database_Version);
+
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
 
         this.db = db;
-        final String SQL_CREATE_USER_ENTRY = "CREATE TABLE " + SearchContract.SearchEntry.Table_Name
+        final String SQL_CREATE_SEARCH_ENTRY = "CREATE TABLE " + SearchContract.SearchEntry.Table_Name
                 + "( " + SearchContract.SearchEntry.Column_Suggestion + " TEXT PRIMARY KEY  "
                 + ")";
-        db.execSQL(SQL_CREATE_USER_ENTRY);
+        db.execSQL(SQL_CREATE_SEARCH_ENTRY);
     }
 
     @Override

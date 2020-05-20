@@ -13,6 +13,7 @@ import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -34,8 +35,10 @@ import com.example.search_engine.search.text_search.data.TextSearchResultData;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -48,9 +51,11 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
     private ImageButton mVoiceSearchButton;
 
     private ImageSearchResultsAdapter mAdapter;
+    private ArrayAdapter<String> mSuggestionsAdapter;
     private ArrayList<ImageSearchResultData> mSearchResults;
     private ArrayList<ImageSearchResultData> mPaginatedSearchResults;
     private int mResults;
+    private Set<String> mUserTypedQueries;
 
     private ImageSearchPresenter mPresenter;
 
@@ -82,6 +87,14 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
         //getting search query from bundle
         /////////////////////////////////////////////////////////////////////
         mTextView.setText(((SearchMain)getActivity()).getSearchQuery());
+        /////////////////////////////////////////////////////////////////////
+
+        //handling suggestions
+        /////////////////////////////////////////////////////////////////////
+        mUserTypedQueries = new HashSet<String>(mPresenter.getUserTypedQueries());
+        mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
+                android.R.layout.simple_list_item_1, mUserTypedQueries.toArray(new String[mUserTypedQueries.size()]));
+        mTextView.setAdapter(mSuggestionsAdapter);
         /////////////////////////////////////////////////////////////////////
 
         //search button click listeners
@@ -195,6 +208,10 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
             return;
 
         mPresenter.searchForResults(mTextView.getText().toString() , country);
+        mUserTypedQueries.add(mTextView.getText().toString());
+        mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
+                android.R.layout.simple_list_item_1, mUserTypedQueries.toArray(new String[mUserTypedQueries.size()]));
+        mTextView.setAdapter(mSuggestionsAdapter);
     }
 
     private void searchByVoiceButtonClicked() {

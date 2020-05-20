@@ -14,5 +14,6 @@ public interface ImageSearchViewPresenterContract {
 
     interface Presenter{
         void searchForResults(String query , String region);
+        ArrayList<String> getUserTypedQueries();
     }
 }

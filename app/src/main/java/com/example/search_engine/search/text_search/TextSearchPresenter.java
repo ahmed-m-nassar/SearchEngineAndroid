@@ -20,6 +20,7 @@ public class TextSearchPresenter implements TextSearchViewPresenterContract.Pres
 
     @Override
     public void searchForResults(String query , String region) {
+        mDataBaseServices.insertSuggestion(query);
         mModel.requestSearchResults(query , region);
 
         //for testing purpose
@@ -70,5 +71,10 @@ public class TextSearchPresenter implements TextSearchViewPresenterContract.Pres
     @Override
     public void hideLoadingScreen() {
         mView.stopLoadingScreen();
+    }
+
+    @Override
+    public ArrayList<String> getUserTypedQueries() {
+        return mDataBaseServices.getSuggestions();
     }
 }

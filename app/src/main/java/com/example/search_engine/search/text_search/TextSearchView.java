@@ -13,6 +13,7 @@ import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -31,8 +32,10 @@ import com.example.search_engine.search.text_search.data.TextSearchResultData;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -44,9 +47,11 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
     private ImageButton mVoiceSearchButton;
 
     private TextSearchResultsAdapter mAdapter;
+    private ArrayAdapter<String> mSuggestionsAdapter;
     private ArrayList<TextSearchResultData> mSearchResults;
     private ArrayList<TextSearchResultData> mPaginatedSearchResults;
     private int mResults;
+    private Set<String> mUserTypedQueries;
 
     private TextSearchPresenter mPresenter;
 
@@ -80,6 +85,14 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
         mTextView.setText(((SearchMain) getActivity()).getSearchQuery());
         /////////////////////////////////////////////////////////////////////
 
+
+        //handling suggestions
+        /////////////////////////////////////////////////////////////////////
+        mUserTypedQueries = new HashSet<String>(mPresenter.getUserTypedQueries());
+        mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
+                android.R.layout.simple_list_item_1, mUserTypedQueries.toArray(new String[mUserTypedQueries.size()]));
+        mTextView.setAdapter(mSuggestionsAdapter);
+        /////////////////////////////////////////////////////////////////////
 
         //search button click listeners
         ///////////////////////////////////////////////////////////////////
@@ -157,6 +170,11 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
             return;
 
         mPresenter.searchForResults(mTextView.getText().toString() , country);
+        mUserTypedQueries.add(mTextView.getText().toString());
+        mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
+                android.R.layout.simple_list_item_1, mUserTypedQueries.toArray(new String[mUserTypedQueries.size()]));
+        mTextView.setAdapter(mSuggestionsAdapter);
+
     }
 
     private void searchByVoiceButtonClicked() {

@@ -14,7 +14,8 @@ public class DatabaseServicesImpl extends DBHelper implements DatabaseServices {
     @Override
     public ArrayList<String> getSuggestions() {
         String query="Select * From "+ SearchContract.SearchEntry.Table_Name;
-        Cursor cursor=getReadableDatabase().rawQuery(query,null);
+        String[] empt = {};
+        Cursor cursor=getReadableDatabase().rawQuery(query,empt);
 
         ArrayList<String> suggestions = new ArrayList<>();
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {

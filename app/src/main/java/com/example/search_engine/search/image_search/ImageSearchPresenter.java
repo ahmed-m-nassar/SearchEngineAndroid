@@ -25,6 +25,7 @@ public class ImageSearchPresenter implements ImageSearchModelPresenterContract.P
 
     @Override
     public void searchForResults(String query , String region) {
+        mDataBaseServices.insertSuggestion(query);
         mModel.requestSearchResults(query , region);
 
         //for test purpose
@@ -62,5 +63,10 @@ public class ImageSearchPresenter implements ImageSearchModelPresenterContract.P
     @Override
     public void hideLoadingScreen() {
         mView.stopLoadingScreen();
+    }
+
+    @Override
+    public ArrayList<String> getUserTypedQueries() {
+        return mDataBaseServices.getSuggestions();
     }
 }

@@ -14,5 +14,6 @@ public interface TextSearchViewPresenterContract {
 
     interface Presenter{
         void searchForResults(String query , String region) ;
+        ArrayList<String> getUserTypedQueries();
     }
 }
