@@ -133,7 +133,7 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String query = mTextView.getText().toString().trim();
                 if(query.length() > 3)
-                    mPresenter.searchForQuerySuggestions(query);
+                    mPresenter.searchForQuerySuggestions(s.toString());
             }
 
             @Override
@@ -195,6 +195,8 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
         mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
                 android.R.layout.simple_list_item_1, searchSuggestions.toArray(new String[searchSuggestions.size()]));
         mTextView.setAdapter(mSuggestionsAdapter);
+        mSuggestionsAdapter.getFilter().filter(mTextView.getText().toString());
+
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////

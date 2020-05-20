@@ -26,7 +26,7 @@ public class TextSearchModel implements TextSearchModelPresenterContract.Model {
 
         @GET(EndPointUtilities.SEARCH_SUGGESTIONS)
         Call<List<SuggestionData>> getSuggestions(
-                @Query(EndPointUtilities.SEARCH_SUGGESTIONS) String searchQuery
+                @Query(EndPointUtilities.SEARCH_QUERY_PARAMETER) String searchQuery
         );
     }
 

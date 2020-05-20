@@ -2,6 +2,7 @@ package com.example.search_engine.search.trends;
 
 import com.example.search_engine.database.DatabaseServices;
 import com.example.search_engine.database.DatabaseServicesImpl;
+import com.example.search_engine.search.image_search.data.ImageSearchResultData;
 import com.example.search_engine.search.text_search.TextSearchModel;
 import com.example.search_engine.search.text_search.TextSearchModelPresenterContract;
 import com.example.search_engine.search.text_search.TextSearchViewPresenterContract;
@@ -46,23 +47,43 @@ public class TrendsPresenter implements TrendsModelPresenterContract.Presenter ,
     }
 
 
+
+
     @Override
     public void showLoadingScreen() {
-        mView.showLoadingScreen();
+        try {
+            mView.showLoadingScreen();
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
     public void showResults(ArrayList<TrendsData> results) {
-        mView.showSearchResults(results);
+        try{
+            mView.showSearchResults(results);
+        } catch (Exception e) {
+
+        }
+
     }
 
     @Override
     public void showMessage(String message) {
-        mView.showMessage(message);
+        try {
+            mView.showMessage(message);
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
     public void hideLoadingScreen() {
-        mView.stopLoadingScreen();
+        try {
+            mView.stopLoadingScreen();
+        } catch (Exception e) {
+
+        }
+
     }
 }

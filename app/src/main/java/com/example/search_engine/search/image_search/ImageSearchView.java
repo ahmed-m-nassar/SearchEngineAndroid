@@ -233,6 +233,8 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
         mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
                 android.R.layout.simple_list_item_1, searchSuggestions.toArray(new String[searchSuggestions.size()]));
         mTextView.setAdapter(mSuggestionsAdapter);
+        mSuggestionsAdapter.getFilter().filter(mTextView.getText().toString());
+
     }
 
     //Utility functions
@@ -246,7 +248,11 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
 
         mPresenter.searchForResults(mTextView.getText().toString() , country);
         mUserTypedQueries.add(mTextView.getText().toString());
-        Set<String> searchSuggestions = new HashSet<>(mCloudReceivedQueries);
+        Set<String> searchSuggestions;
+        if(mCloudReceivedQueries != null)
+            searchSuggestions = new HashSet<>(mCloudReceivedQueries);
+        else
+            searchSuggestions = new HashSet<>();
         searchSuggestions.addAll(mUserTypedQueries);
         mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
                 android.R.layout.simple_list_item_1, searchSuggestions.toArray(new String[searchSuggestions.size()]));

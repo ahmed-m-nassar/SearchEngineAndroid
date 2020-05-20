@@ -1,7 +1,7 @@
 package com.example.search_engine.utilities;
 
 public class EndPointUtilities {
-    public static final  String BASE_URL = "https://401e1e11.ngrok.io/search/";
+    public static final  String BASE_URL = "http://e45606fb.ngrok.io/search/";
     public static final  String SEARCH_TEXT = "document";
     public static final  String SEARCH_IMAGE = "image";
     public static final  String SEARCH_TRENDS = "trend";

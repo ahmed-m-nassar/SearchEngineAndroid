@@ -46,24 +46,43 @@ public class ImageSearchPresenter implements ImageSearchModelPresenterContract.P
         //////////////////////////////////////////////////////////////////////
     }
 
+
     @Override
     public void showLoadingScreen() {
-        mView.showLoadingScreen();
+        try {
+            mView.showLoadingScreen();
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
     public void showResults(ArrayList<ImageSearchResultData> results) {
-        mView.showSearchResults(results);
+        try{
+            mView.showSearchResults(results);
+        } catch (Exception e) {
+
+        }
+
     }
 
     @Override
     public void showMessage(String message) {
-        mView.showMessage(message);
+        try {
+            mView.showMessage(message);
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
     public void hideLoadingScreen() {
-        mView.stopLoadingScreen();
+        try {
+            mView.stopLoadingScreen();
+        } catch (Exception e) {
+
+        }
+
     }
 
     @Override
@@ -77,20 +96,23 @@ public class ImageSearchPresenter implements ImageSearchModelPresenterContract.P
         for(int i = 0 ; i < suggestions.size() ; i++) {
             suggestionsList.add(suggestions.get(i).getmSuggestion()) ;
         }
-        mView.showSuggestions(suggestionsList);
-    }
+        try{
+            mView.showSuggestions(suggestionsList);
+        } catch (Exception e) {
+        }
 
+    }
     @Override
     public void searchForQuerySuggestions(String query) {
-        //mModel.requestSearchSuggestions(query);
+        mModel.requestSearchSuggestions(query);
 
         //for test purpose
         //////////////////////////////////////////////////////////
-        ArrayList<String> suggestions =new ArrayList<String> ();
-        suggestions.add("Egypt is beautiful");
-        suggestions.add("Egypt is good");
-        suggestions.add("Egypt is awesome");
-        mView.showSuggestions(suggestions);
+        //ArrayList<String> suggestions =new ArrayList<String> ();
+        //suggestions.add("Egypt is beautiful");
+        //suggestions.add("Egypt is good");
+        //suggestions.add("Egypt is awesome");
+        //mView.showSuggestions(suggestions);
         ///////////////////////////////////////////////////////////
     }
 }
