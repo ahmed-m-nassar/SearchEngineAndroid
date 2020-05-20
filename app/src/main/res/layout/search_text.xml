@@ -26,6 +26,8 @@
             android:hint="Search"
             android:id="@+id/SearchText_Text_TextView"
             android:layout_margin="10dp"
+            android:maxLines="1"
+            android:inputType="text"
             ></AutoCompleteTextView>
         <ImageButton
             android:layout_width="0dp"

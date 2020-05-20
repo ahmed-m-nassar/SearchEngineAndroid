@@ -3,6 +3,7 @@ package com.example.search_engine.search.image_search;
 import com.example.search_engine.database.DatabaseServices;
 import com.example.search_engine.database.DatabaseServicesImpl;
 import com.example.search_engine.search.image_search.data.ImageSearchResultData;
+import com.example.search_engine.search.suggestion.SuggestionData;
 import com.example.search_engine.search.text_search.TextSearchModel;
 import com.example.search_engine.search.text_search.TextSearchModelPresenterContract;
 import com.example.search_engine.search.text_search.TextSearchViewPresenterContract;
@@ -68,5 +69,28 @@ public class ImageSearchPresenter implements ImageSearchModelPresenterContract.P
     @Override
     public ArrayList<String> getUserTypedQueries() {
         return mDataBaseServices.getSuggestions();
+    }
+
+    @Override
+    public void showSuggestions(ArrayList<SuggestionData> suggestions) {
+        ArrayList<String> suggestionsList = new ArrayList<>();
+        for(int i = 0 ; i < suggestions.size() ; i++) {
+            suggestionsList.add(suggestions.get(i).getmSuggestion()) ;
+        }
+        mView.showSuggestions(suggestionsList);
+    }
+
+    @Override
+    public void searchForQuerySuggestions(String query) {
+        //mModel.requestSearchSuggestions(query);
+
+        //for test purpose
+        //////////////////////////////////////////////////////////
+        ArrayList<String> suggestions =new ArrayList<String> ();
+        suggestions.add("Egypt is beautiful");
+        suggestions.add("Egypt is good");
+        suggestions.add("Egypt is awesome");
+        mView.showSuggestions(suggestions);
+        ///////////////////////////////////////////////////////////
     }
 }

@@ -10,6 +10,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +30,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.search_engine.R;
 import com.example.search_engine.search.SearchMain;
+import com.example.search_engine.search.suggestion.SuggestionData;
 import com.example.search_engine.search.text_search.adapter.TextSearchResultsAdapter;
 import com.example.search_engine.search.text_search.data.TextSearchResultData;
 
@@ -52,6 +56,7 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
     private ArrayList<TextSearchResultData> mPaginatedSearchResults;
     private int mResults;
     private Set<String> mUserTypedQueries;
+    private Set<String> mCloudReceivedQueries;
 
     private TextSearchPresenter mPresenter;
 
@@ -92,6 +97,8 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
         mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
                 android.R.layout.simple_list_item_1, mUserTypedQueries.toArray(new String[mUserTypedQueries.size()]));
         mTextView.setAdapter(mSuggestionsAdapter);
+
+        mCloudReceivedQueries = new HashSet<>();
         /////////////////////////////////////////////////////////////////////
 
         //search button click listeners
@@ -110,6 +117,28 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
             @Override
             public void onClick(View v) {
                 searchByVoiceButtonClicked();
+            }
+        });
+        ///////////////////////////////////////////////////////////////////////
+
+        //on text change in text view
+        ///////////////////////////////////////////////////////////////////////
+        mTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String query = mTextView.getText().toString().trim();
+                if(query.length() > 3)
+                    mPresenter.searchForQuerySuggestions(query);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
         ///////////////////////////////////////////////////////////////////////
@@ -155,6 +184,18 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
     public void showMessage(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void showSuggestions(ArrayList<String> suggestions) {
+
+        mCloudReceivedQueries = new HashSet<String>(suggestions);
+        Set<String> searchSuggestions = new HashSet<>(mCloudReceivedQueries);
+        searchSuggestions.addAll(mUserTypedQueries);
+
+        mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
+                android.R.layout.simple_list_item_1, searchSuggestions.toArray(new String[searchSuggestions.size()]));
+        mTextView.setAdapter(mSuggestionsAdapter);
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,8 +212,10 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
 
         mPresenter.searchForResults(mTextView.getText().toString() , country);
         mUserTypedQueries.add(mTextView.getText().toString());
+        Set<String> searchSuggestions = new HashSet<>(mCloudReceivedQueries);
+        searchSuggestions.addAll(mUserTypedQueries);
         mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
-                android.R.layout.simple_list_item_1, mUserTypedQueries.toArray(new String[mUserTypedQueries.size()]));
+                android.R.layout.simple_list_item_1, searchSuggestions.toArray(new String[searchSuggestions.size()]));
         mTextView.setAdapter(mSuggestionsAdapter);
 
     }

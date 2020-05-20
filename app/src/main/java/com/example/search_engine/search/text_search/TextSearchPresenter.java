@@ -2,6 +2,7 @@ package com.example.search_engine.search.text_search;
 
 import com.example.search_engine.database.DatabaseServices;
 import com.example.search_engine.database.DatabaseServicesImpl;
+import com.example.search_engine.search.suggestion.SuggestionData;
 import com.example.search_engine.search.text_search.data.TextSearchResultData;
 
 import java.util.ArrayList;
@@ -76,5 +77,28 @@ public class TextSearchPresenter implements TextSearchViewPresenterContract.Pres
     @Override
     public ArrayList<String> getUserTypedQueries() {
         return mDataBaseServices.getSuggestions();
+    }
+
+    @Override
+    public void showSuggestions(ArrayList<SuggestionData> suggestions) {
+        ArrayList<String> suggestionsList = new ArrayList<>();
+        for(int i = 0 ; i < suggestions.size() ; i++) {
+            suggestionsList.add(suggestions.get(i).getmSuggestion()) ;
+        }
+        mView.showSuggestions(suggestionsList);
+    }
+
+    @Override
+    public void searchForQuerySuggestions(String query) {
+        //mModel.requestSearchSuggestions(query);
+
+        //for test purpose
+        //////////////////////////////////////////////////////////
+        ArrayList<String> suggestions =new ArrayList<String> ();
+        suggestions.add("Egypt is beautiful");
+        suggestions.add("Egypt is good");
+        suggestions.add("Egypt is awesome");
+        mView.showSuggestions(suggestions);
+        ///////////////////////////////////////////////////////////
     }
 }

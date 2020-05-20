@@ -1,5 +1,6 @@
 package com.example.search_engine.search.text_search;
 
+import com.example.search_engine.search.suggestion.SuggestionData;
 import com.example.search_engine.search.text_search.data.TextSearchResultData;
 import com.example.search_engine.utilities.EndPointUtilities;
 
@@ -21,6 +22,11 @@ public class TextSearchModel implements TextSearchModelPresenterContract.Model {
         Call<List<TextSearchResultData>> getSearchResults(
                 @Query(EndPointUtilities.SEARCH_QUERY_PARAMETER) String searchQuery ,
                 @Query(EndPointUtilities.REGION_PARAMETER) String region
+        );
+
+        @GET(EndPointUtilities.SEARCH_SUGGESTIONS)
+        Call<List<SuggestionData>> getSuggestions(
+                @Query(EndPointUtilities.SEARCH_SUGGESTIONS) String searchQuery
         );
     }
 
@@ -61,6 +67,33 @@ public class TextSearchModel implements TextSearchModelPresenterContract.Model {
                 mPresenter.hideLoadingScreen();
                 mPresenter.showResults(new ArrayList<TextSearchResultData>());
                 mPresenter.showMessage("Something went wrong");
+            }
+        });
+    }
+
+    @Override
+    public void requestSearchSuggestions(String searchQuery) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(EndPointUtilities.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        TextSearchModel.TextSearchCloudApi textSearchCloudApi = retrofit.create(TextSearchModel.TextSearchCloudApi.class);
+        Call<List<SuggestionData>> call = textSearchCloudApi.getSuggestions(searchQuery);
+        call.enqueue(new Callback<List<SuggestionData>>() {
+            @Override
+            public void onResponse(Call<List<SuggestionData>> call, Response<List<SuggestionData>> response) {
+                if (!response.isSuccessful()) {
+                    mPresenter.showSuggestions( new ArrayList<SuggestionData>());
+                    return;
+                }
+                List<SuggestionData> results = response.body();
+                mPresenter.showSuggestions( new ArrayList<SuggestionData>(results));
+
+            }
+            @Override
+            public void onFailure(Call<List<SuggestionData>> call, Throwable t) {
+                mPresenter.showSuggestions( new ArrayList<SuggestionData>());
             }
         });
     }

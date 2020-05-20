@@ -10,6 +10,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +58,7 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
     private ArrayList<ImageSearchResultData> mPaginatedSearchResults;
     private int mResults;
     private Set<String> mUserTypedQueries;
-
+    private Set<String> mCloudReceivedQueries;
     private ImageSearchPresenter mPresenter;
 
     private int ACCESS_COARSE_LOCATION_CODE = 100;
@@ -113,6 +115,28 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
             @Override
             public void onClick(View v) {
                 searchByVoiceButtonClicked();
+            }
+        });
+        ///////////////////////////////////////////////////////////////////////
+
+        //on text change in text view
+        ///////////////////////////////////////////////////////////////////////
+        mTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String query = mTextView.getText().toString().trim();
+                if(query.length() > 3)
+                    mPresenter.searchForQuerySuggestions(query);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
         ///////////////////////////////////////////////////////////////////////
@@ -198,6 +222,19 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
         displayMoreSearchResults();
     }
 
+
+    @Override
+    public void showSuggestions(ArrayList<String> suggestions) {
+
+        mCloudReceivedQueries = new HashSet<String>(suggestions);
+        Set<String> searchSuggestions = new HashSet<>(mCloudReceivedQueries);
+        searchSuggestions.addAll(mUserTypedQueries);
+
+        mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
+                android.R.layout.simple_list_item_1, searchSuggestions.toArray(new String[searchSuggestions.size()]));
+        mTextView.setAdapter(mSuggestionsAdapter);
+    }
+
     //Utility functions
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -209,9 +246,12 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
 
         mPresenter.searchForResults(mTextView.getText().toString() , country);
         mUserTypedQueries.add(mTextView.getText().toString());
+        Set<String> searchSuggestions = new HashSet<>(mCloudReceivedQueries);
+        searchSuggestions.addAll(mUserTypedQueries);
         mSuggestionsAdapter = new ArrayAdapter<String>(this.getContext(),
-                android.R.layout.simple_list_item_1, mUserTypedQueries.toArray(new String[mUserTypedQueries.size()]));
+                android.R.layout.simple_list_item_1, searchSuggestions.toArray(new String[searchSuggestions.size()]));
         mTextView.setAdapter(mSuggestionsAdapter);
+
     }
 
     private void searchByVoiceButtonClicked() {

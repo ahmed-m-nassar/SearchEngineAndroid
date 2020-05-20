@@ -10,10 +10,12 @@ public interface ImageSearchViewPresenterContract {
         void showLoadingScreen();
         void stopLoadingScreen();
         void showMessage(String message);
+        void showSuggestions(ArrayList<String> suggestions);
     }
 
     interface Presenter{
         void searchForResults(String query , String region);
         ArrayList<String> getUserTypedQueries();
+        void searchForQuerySuggestions(String query);
     }
 }
