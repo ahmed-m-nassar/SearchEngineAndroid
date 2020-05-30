@@ -131,9 +131,15 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = mTextView.getText().toString().trim();
-                if(query.length() > 3)
-                    mPresenter.searchForQuerySuggestions(s.toString());
+                //Char at newly inserted pos.
+                if(start + before < s.length()) {
+                    char c = s.charAt(start + before);
+                    if (c == ' ') {
+                        String query = mTextView.getText().toString().trim();
+                        if (query.length() > 3)
+                            mPresenter.searchForQuerySuggestions(s.toString());
+                    }
+                }
             }
 
             @Override
@@ -210,7 +216,7 @@ public class TextSearchView extends Fragment implements TextSearchViewPresenterC
     private void searchButtonClicked() {
         String country = getCurrentLocation();
         if(country == null)
-            return;
+            country = "Egypt";
 
         mPresenter.searchForResults(mTextView.getText().toString() , country);
         mUserTypedQueries.add(mTextView.getText().toString());

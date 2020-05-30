@@ -129,9 +129,14 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String query = mTextView.getText().toString().trim();
-                if(query.length() > 3)
-                    mPresenter.searchForQuerySuggestions(query);
+                if(start + before < s.length()) {
+                    char c = s.charAt(start + before);
+                    if (c == ' ') {
+                        String query = mTextView.getText().toString().trim();
+                        if (query.length() > 3)
+                            mPresenter.searchForQuerySuggestions(s.toString());
+                    }
+                }
             }
 
             @Override
@@ -244,7 +249,7 @@ public class ImageSearchView extends Fragment implements ImageSearchViewPresente
     private void searchButtonClicked() {
         String country = getCurrentLocation();
         if(country == null)
-            return;
+            country = "Egypt";
 
         mPresenter.searchForResults(mTextView.getText().toString() , country);
         mUserTypedQueries.add(mTextView.getText().toString());
